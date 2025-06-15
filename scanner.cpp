@@ -32,24 +32,24 @@ Scanner::Scanner(string inputFileName/*, SymbolTable* table*/)
 // Método para inicializar o mapa de palavras reservadas
 void Scanner::initializeReservedWords()
 {
-    reservedWords["boolean"] = ID;
-    reservedWords["class"]   = ID; 
-    reservedWords["else"]    = ID; 
-    reservedWords["extends"] = ID; 
-    reservedWords["false"]   = ID; 
-    reservedWords["if"]      = ID; 
-    reservedWords["int"]     = ID; 
-    reservedWords["length"]  = ID; 
-    reservedWords["main"]    = ID; 
-    reservedWords["new"]     = ID; 
-    reservedWords["public"]  = ID; 
-    reservedWords["return"]  = ID; 
-    reservedWords["static"]  = ID; 
-    reservedWords["String"]  = ID; 
-    reservedWords["this"]    = ID; 
-    reservedWords["true"]    = ID; 
-    reservedWords["void"]    = ID; 
-    reservedWords["while"]   = ID; 
+    reservedWords["boolean"] = KW_BOOLEAN;
+    reservedWords["class"]   = KW_CLASS;  
+    reservedWords["else"]    = KW_ELSE;   
+    reservedWords["extends"] = KW_EXTENDS;
+    reservedWords["false"]   = KW_FALSE;  
+    reservedWords["if"]      = KW_IF;     
+    reservedWords["int"]     = KW_INT;    
+    reservedWords["length"]  = KW_LENGTH; 
+    reservedWords["main"]    = KW_MAIN;   
+    reservedWords["new"]     = KW_NEW;    
+    reservedWords["public"]  = KW_PUBLIC; 
+    reservedWords["return"]  = KW_RETURN; 
+    reservedWords["static"]  = KW_STATIC; 
+    reservedWords["String"]  = KW_STRING; 
+    reservedWords["this"]    = KW_THIS;   
+    reservedWords["true"]    = KW_TRUE;
+    reservedWords["void"]    = KW_VOID;
+    reservedWords["while"]   = KW_WHILE;
 }
 
 // Métodos auxiliares
@@ -159,7 +159,7 @@ Token* Scanner::nextToken()
 
     while (true)
     {
-        skipWhitespace(); // Ignora whitespace 
+        skipWhitespace(); // Ignora espaços 
 
         if (isEOF())
         {
@@ -222,7 +222,7 @@ Token* Scanner::nextToken()
                             if (println_part == "println")
                             {
                                 // Casa com "System.out.println" 
-                                return new Token(SEPARATOR, potential_full_lexeme); // Tratando como separator 
+                                return new Token(KW_SYSTEM_OUT_PRINTLN, potential_full_lexeme); // Tratando como separator 
                             }
                         }
                     }
@@ -259,23 +259,23 @@ Token* Scanner::nextToken()
         // Operators 
         if (c == '&' && peekChar() == '&'){
             nextChar();
-            return new Token(OPERATOR, "&&");
+            return new Token(OP_AND, "&&");
         }
-        if (c == '<')return new Token(OPERATOR, "<");
-        if (c == '>')return new Token(OPERATOR, ">");
-        if (c == '+')return new Token(OPERATOR, "+");
-        if (c == '-') return new Token(OPERATOR, "-");
-        if (c == '*') return new Token(OPERATOR, "*");
+        if (c == '<')return new Token(OP_LT, "<");
+        if (c == '>')return new Token(OP_GT, ">");
+        if (c == '+')return new Token(OP_PLUS, "+");
+        if (c == '-') return new Token(OP_MINUS, "-");
+        if (c == '*') return new Token(OP_MULT, "*");
         if (c == '=')
         {
             if (peekChar() == '=')
             {
                 nextChar();
-                return new Token(OPERATOR, "==");
+                return new Token(OP_EQ, "==");
             }
             else
             {
-                return new Token(OPERATOR, "=");
+                return new Token(OP_ASSIGN, "=");
             }
         }
         if (c == '!')
@@ -283,24 +283,24 @@ Token* Scanner::nextToken()
             if (peekChar() == '=')
             {
                 nextChar();
-                return new Token(OPERATOR, "!=");
+                return new Token(OP_NEQ, "!=");
             }
             else
             {
-                return new Token(OPERATOR, "!");
+                return new Token(OP_NOT, "!");
             }
         }
 
-        // Separators 
-        if (c == '(') return new Token(SEPARATOR, "(");
-        if (c == ')') return new Token(SEPARATOR, ")");
-        if (c == '[') return new Token(SEPARATOR, "[");
-        if (c == ']') return new Token(SEPARATOR, "]");
-        if (c == '{') return new Token(SEPARATOR, "{");
-        if (c == '}') return new Token(SEPARATOR, "}");
-        if (c == ';') return new Token(SEPARATOR, ";");
-        if (c == '.') return new Token(SEPARATOR, ".");
-        if (c == ',') return new Token(SEPARATOR, ",");
+        // Separators
+        if (c == '(') return new Token(SEP_LPAREN, "(");   
+        if (c == ')') return new Token(SEP_RPAREN, ")");   
+        if (c == '[') return new Token(SEP_LBRACKET, "["); 
+        if (c == ']') return new Token(SEP_RBRACKET, "]"); 
+        if (c == '{') return new Token(SEP_LBRACE, "{");   
+        if (c == '}') return new Token(SEP_RBRACE, "}");   
+        if (c == ';') return new Token(SEP_SEMICOLON, ";");
+        if (c == '.') return new Token(SEP_DOT, ".");      
+        if (c == ',') return new Token(SEP_COMMA, ",");
 
         // Caracter inválido
         lexicalError("Símbolo inválido: '" + string(1, c) + "'");

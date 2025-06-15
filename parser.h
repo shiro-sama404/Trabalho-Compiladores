@@ -14,6 +14,14 @@ class Parser
 		void run();
         void program();
         void mainClass();
-        //Continuar....
+        void classDeclaration();
+		void varDeclaration();
+		void methodDeclaration();
+		void params();
+		void type();
+		void statement();
+		void expression();
+		void primaryExpression();
+		void expressionsList();
         void error(string);
 };
