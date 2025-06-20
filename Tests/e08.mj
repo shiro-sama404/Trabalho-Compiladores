@@ -1,0 +1,7 @@
+// e08_incorrect_var_decl
+
+class ErrorTest {
+    public static void main (String[] args){
+        int ; // Erro: ID faltando
+    }
+}

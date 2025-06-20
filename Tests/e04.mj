@@ -1,0 +1,8 @@
+// e04_keyword_as_id
+
+class ErrorTest {
+    public static void main (String[] args){
+        int class; // Erro: 'class' é palavra reservada
+        class = 1;
+    }
+}

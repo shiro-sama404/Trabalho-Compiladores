@@ -1,0 +1,15 @@
+// 07_class_extension
+
+class BaseClass {
+    public int getVal(){
+        return 10;
+    }
+}
+
+class DerivedClass extends BaseClass {
+    public static void main (String[] args){
+        DerivedClass obj;
+        obj = new DerivedClass();
+        System.out.println(obj.getVal());
+    }
+}

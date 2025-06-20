@@ -1,0 +1,9 @@
+// e09_if_without_else
+
+class ErrorTest {
+    public static void main (String[] args){
+        if (true)
+            System.out.println(1); // Erro: 'else' é obrigatório após Statement de 'if'
+        System.out.println(2);
+    }
+}

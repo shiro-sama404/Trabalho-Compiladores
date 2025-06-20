@@ -1,0 +1,16 @@
+// e10_missing_comment_end
+
+// /* Normal comment 1 */
+/* 
+
+Normal comment 2 
+
+*/
+
+class HelloWorld {
+    public static void main (String[] args){
+        System.out.println(1);
+    }
+}
+
+/* missing comment

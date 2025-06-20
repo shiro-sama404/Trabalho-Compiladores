@@ -7,10 +7,11 @@
 class Scanner 
 {
     private: 
-        string input; //Armazena o texto de entrada
-        int pos; //Posição atual
+        string inputFileName; // Armazena o nome do arquivo de entrada
+        string input;         // Armazena o texto de entrada
+        int pos;              // Posição atual
         int line;
-        std::unordered_map<string, int> reservedWords;
+        unordered_map<string, int> reservedWords;
 
         // Métodos auxiliares
         void initializeReservedWords(); // Inicializa o mapa de palavras reservadas
@@ -26,16 +27,20 @@ class Scanner
         
     
     public:
-    //Construtor
+        // Construtor
         Scanner(string);
 
+        int getPos();
+
         int getLine();
+
+        string getFilename();
     
-        //Método que retorna o próximo token da entrada
+        // Método que retorna o próximo token da entrada
         Token* nextToken();        
     
-        //Método para manipular erros
-        void lexicalError(string);
+        // Método para manipular erros
+        void error(string);
 };
 
 #endif

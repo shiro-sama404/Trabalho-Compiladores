@@ -1,0 +1,32 @@
+// 04_expressions
+
+class ExprTest {
+    int field1;
+    public int compute(int a, int b){
+        int result;
+        int[] arr;
+        arr = new int[a + b];
+        result = a + b * (10 - 5);
+        result = result && true; // Exemplo de operador booleano
+        result = 1 < 2;
+        result = this.field1;
+        result = arr.length;
+        result = new Another().getValue(); // Chamada de método
+        result = !false;
+        return result;
+    }
+
+    public int getValue(){
+        return 5;
+    }
+
+    public static void main(String[] args){
+        System.out.println(1 + 2 * 3);
+    }
+}
+
+class Another {
+    public int getValue() {
+        return 100;
+    }
+}

@@ -1,0 +1,6 @@
+//e02_unmatched_brace
+
+class ErrorTest {
+    public static void main (String[] args){
+        System.out.println(10);
+    } // Erro: Chave extra ou faltando no final

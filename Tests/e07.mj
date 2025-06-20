@@ -1,0 +1,10 @@
+// e07_missing_return.mj
+
+class ErrorTest {
+    public int testMethod(){
+        int x;
+        x = 10;
+        // Erro: 'return' faltando
+    }
+    public static void main(String[] args) {}
+}

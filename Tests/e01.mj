@@ -1,0 +1,8 @@
+// e01_missing_semicolon
+
+class ErrorTest {
+    public static void main (String[] args){
+        int x // Erro: Ponto e vírgula faltando
+        x = 5;
+    }
+}

@@ -1,6 +1,5 @@
 #include "parser.h"
 #include <string>
-using std::string;
 
 Parser::Parser(string input)
 {
@@ -11,6 +10,7 @@ void
 Parser::advance()
 {
 	lToken = scanner->nextToken();
+    cout << "Position: " + to_string(scanner->getPos()) + ". Token: " << lToken->name << " '" << lToken->lexeme << "'" << endl;
 }
 
 void
@@ -19,7 +19,7 @@ Parser::match(int t)
 	if (lToken->name == t)
 		advance();
 	else
-		error("Sintax error: Expected " + std::to_string(t) + ". Found " + std::to_string(lToken->name) + " (" + lToken->lexeme + ")");
+		error("Expected '" + Token::toLexeme(t) + "'. Found " + " '" + lToken->lexeme + "'");
 }
 
 void
@@ -83,16 +83,12 @@ Parser::classDeclaration()
     match(SEP_LBRACE);
 
     while (lToken->name == KW_INT || lToken->name == KW_BOOLEAN || lToken->name == ID) {
-       if (lToken->name == KW_PUBLIC) {
-            methodDeclaration();
-        }
-        // Se for 'int', 'boolean' ou 'ID' pode ser VarDeclaration
-        else if (lToken->name == KW_INT || lToken->name == KW_BOOLEAN || lToken->name == ID) {
-            varDeclaration();
-        } else {
-            break; // Não é um início de VarDeclaration ou MethodDeclaration
-        }
+        varDeclaration();
     }
+    while (lToken->name == KW_PUBLIC) {
+        methodDeclaration();
+    }
+
     match(SEP_RBRACE);
 }
 
@@ -169,7 +165,7 @@ Parser::type()
     } else if (lToken->name == ID) {
         match(ID);
     } else {
-        error("Erro de sintaxe: Esperado tipo (int, boolean ou ID).");
+        error("Esperado tipo (int, boolean ou ID).");
     }
 }
 
@@ -221,7 +217,7 @@ Parser::statement()
         expression();
         match(SEP_SEMICOLON);
     } else {
-        error("Erro de sintaxe: Esperado uma declaração de instrução.");
+        error("Expected a instruction declaration.");
     }
 }
 
@@ -267,7 +263,7 @@ Parser::expression()
                 }
                 match(SEP_RPAREN);
             } else {
-                error("Erro de sintaxe: Esperado 'length' ou ID após '.'.");
+                error("Esperado 'length' ou ID após '.'.");
             }
         }
     }
@@ -301,7 +297,7 @@ Parser::primaryExpression()
             match(SEP_LPAREN);
             match(SEP_RPAREN);
         } else {
-            error("Erro de sintaxe: Esperado 'int' ou ID após 'new'.");
+            error("Esperado 'int' ou ID após 'new'.");
         }
     } else if (lToken->name == OP_NOT) { // ! Expression
         match(OP_NOT);
@@ -311,7 +307,7 @@ Parser::primaryExpression()
         expression();
         match(SEP_RPAREN);
     } else {
-        error("Erro de sintaxe: Esperado o início de uma expressão válida.");
+        error("Esperado o início de uma expressão válida.");
     }
 }
 
@@ -330,6 +326,6 @@ Parser::expressionsList()
 void
 Parser::error(string str)
 {
-	cout << "Linha " << scanner->getLine() << ": " << str << endl;
+	cout << scanner->getFilename() + ":" << scanner->getLine() << " sintax error: " << str << endl;
 	exit(EXIT_FAILURE);
 }

@@ -1,0 +1,7 @@
+// e05_malformed_main
+
+class ErrorTest {
+    public static void main (String args){ // Erro: String[] esperado
+        System.out.println(1);
+    }
+}

@@ -4,9 +4,9 @@
 //de entrada e preenche input com seu conteúdo.
 Scanner::Scanner(string inputFileName/*, SymbolTable* table*/)
 {
-    /*this->input = input;
-    cout << "Entrada: " << input << endl << "Tamanho: " 
-         << input.length() << endl;*/
+    this->inputFileName = inputFileName;
+    this->input = "";
+    this->pos = 0;
 
     ifstream inputFile(inputFileName, ios::in);
     string currentLine;
@@ -24,6 +24,8 @@ Scanner::Scanner(string inputFileName/*, SymbolTable* table*/)
         cout << "Unable to open file: " << inputFileName << endl;
         exit(EXIT_FAILURE);
     }
+
+    //cout << "input: " << input << endl << "size: " << input.length() << endl;
 
     // Inicializa o mapa de palavras reservadas
     initializeReservedWords();
@@ -99,8 +101,6 @@ void Scanner::skipWhitespace()
 
 void Scanner::skipComment()
 {
-    char c = nextChar();
-
     if (peekChar() == '/')
     { // Comentário de linha // ...
         nextChar(); // Consome o outro '/'
@@ -136,8 +136,9 @@ void Scanner::skipComment()
         }
         if (!foundEnd)
         {
-            lexicalError("Unterminated block comment.");
+            error("Unterminated block comment.");
         }
+        cout << "Saiu /" << endl;
     }
     else
     {
@@ -146,9 +147,19 @@ void Scanner::skipComment()
     }
 }
 
+int Scanner::getPos()
+{
+    return pos;
+}
+
 int Scanner::getLine()
 {
     return line;
+}
+
+string Scanner::getFilename()
+{
+    return inputFileName;
 }
 
 // Método que retorna o próximo token da entrada
@@ -175,9 +186,11 @@ Token* Scanner::nextToken()
             {
                 skipComment();
                 continue; // Itera novamente após ignorar o comentário
+            }else{
+                // Se não for um comentário é um operador de divisão.
+                cout << "Entrou no /" << endl;
+                return new Token(OP_DIV, "/");
             }
-            // Se não for um comentário é um operador de divisão.
-            return new Token(OPERATOR, "/");
         }
 
         // Identifiers e Reserved Words 
@@ -222,7 +235,7 @@ Token* Scanner::nextToken()
                             if (println_part == "println")
                             {
                                 // Casa com "System.out.println" 
-                                return new Token(KW_SYSTEM_OUT_PRINTLN, potential_full_lexeme); // Tratando como separator 
+                                return new Token(KW_SYSTEM_OUT_PRINTLN, potential_full_lexeme + println_part);
                             }
                         }
                     }
@@ -303,13 +316,13 @@ Token* Scanner::nextToken()
         if (c == ',') return new Token(SEP_COMMA, ",");
 
         // Caracter inválido
-        lexicalError("Símbolo inválido: '" + string(1, c) + "'");
+        error("Lexical error: '" + string(1, c) + "'");
         return nullptr;
     }
 }
 
-void Scanner::lexicalError(string msg)
+void Scanner::error(string msg)
 {
-    cout << "Line " << line << ": " << msg << endl;
+    cout << inputFileName + ":" << line << " lexical error: " << msg << endl;
     exit(EXIT_FAILURE);
 }

@@ -1,0 +1,24 @@
+// 08_multiple_classes
+
+class MainClass {
+    public static void main (String[] args){
+        ClassA a;
+        ClassB b;
+        a = new ClassA();
+        b = new ClassB();
+        System.out.println(a.getA());
+        System.out.println(b.getB());
+    }
+}
+
+class ClassA {
+    public int getA() {
+        return 1;
+    }
+}
+
+class ClassB {
+    public int getB() {
+        return 2;
+    }
+}
