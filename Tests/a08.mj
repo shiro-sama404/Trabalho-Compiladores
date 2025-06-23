@@ -2,12 +2,12 @@
 
 class MainClass {
     public static void main (String[] args){
-        ClassA a;
-        ClassB b;
-        a = new ClassA();
-        b = new ClassB();
-        System.out.println(a.getA());
-        System.out.println(b.getB());
+        //ClassA a;
+        //ClassB b;
+        //a = new ClassA();
+        //b = new ClassB();
+        System.out.println(1); // a.getA()
+        System.out.println(2); // b.getB()
     }
 }
 

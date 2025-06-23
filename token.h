@@ -2,7 +2,7 @@
 #define TOKEN_H
 
 #include <iostream>
-#include <ctype.h>//Funções de caracteres
+#include <ctype.h> //Funções de caracteres
 #include <string>
 #include <unordered_map>
 
@@ -60,6 +60,54 @@ enum Names
     SEP_COMMA      // 44 ,
 };
 
+static const string lexemeList[] = {
+    "UNDEF",
+    "ID",
+    "INTEGER",
+    "OPERATOR",
+    "SEPARATOR",
+    "END_OF_FILE",
+    "KW_CLASS",
+    "KW_PUBLIC",
+    "KW_STATIC",
+    "KW_VOID",
+    "KW_MAIN",
+    "KW_STRING",
+    "KW_EXTENDS",
+    "KW_INT",
+    "KW_BOOLEAN",
+    "KW_TRUE",
+    "KW_FALSE",
+    "KW_THIS",
+    "KW_NEW",
+    "KW_RETURN",
+    "KW_IF",
+    "KW_ELSE",
+    "KW_WHILE",
+    "KW_LENGTH",
+    "KW_SYSTEM_OUT_PRINTLN",
+    "OP_AND",
+    "OP_LT",
+    "OP_GT",
+    "OP_EQ",
+    "OP_NEQ",
+    "OP_PLUS",
+    "OP_MINUS",
+    "OP_MULT",
+    "OP_DIV",
+    "OP_ASSIGN",
+    "OP_NOT",
+    "SEP_LPAREN",
+    "SEP_RPAREN",
+    "SEP_LBRACKET",
+    "SEP_RBRACKET",
+    "SEP_LBRACE",
+    "SEP_RBRACE",
+    "SEP_SEMICOLON",
+    "SEP_DOT",
+    "SEP_COMMA"
+};
+
 class Token 
 {
     public: 
@@ -87,51 +135,19 @@ class Token
         }
 
         static string toLexeme(int name){
-           if (name == 0) return "UNDEF";
-           if (name == 2) return "ID"; 
-           if (name == 3) return "INTEGER"; 
-           if (name == 4) return "SEPARATOR";
-           if (name == 5) return "END_OF_FILE";
-           if (name == 6) return "KW_CLASS"; 
-           if (name == 7) return "KW_PUBLIC"; 
-           if (name == 8) return "KW_STATIC";
-           if (name == 9) return "KW_VOID";
-           if (name == 10) return "KW_MAIN";
-           if (name == 11) return "KW_STRING";
-           if (name == 12) return "KW_EXTENDS";
-           if (name == 13) return "KW_INT";
-           if (name == 14) return "KW_BOOLEAN"; 
-           if (name == 15) return "KW_TRUE"; 
-           if (name == 16) return "KW_FALSE";
-           if (name == 17) return "KW_THIS";
-           if (name == 18) return "KW_NEW"; 
-           if (name == 19) return "KW_RETURN"; 
-           if (name == 20) return "KW_IF";
-           if (name == 21) return "KW_ELSE";
-           if (name == 22) return "KW_WHILE"; 
-           if (name == 23) return "KW_LENGTH"; 
-           if (name == 24) return "KW_SYSTEM_OUT_PRINTLN";
-           if (name == 25) return "&&";
-           if (name == 26) return "<"; 
-           if (name == 27) return ">"; 
-           if (name == 28) return "==";
-           if (name == 29) return "!=";
-           if (name == 30) return "+"; 
-           if (name == 31) return "-"; 
-           if (name == 32) return "*";
-           if (name == 33) return "/";
-           if (name == 34) return "="; 
-           if (name == 35) return "!"; 
-           if (name == 36) return "(";
-           if (name == 37) return ")";
-           if (name == 38) return "["; 
-           if (name == 39) return "]"; 
-           if (name == 40) return "{";
-           if (name == 41) return "}";
-           if (name == 42) return ";";
-           if (name == 43) return ".";
-           if (name == 44) return ",";
-           return "";
+           return (name >= 0 && name <= 44) ? lexemeList[name] : lexemeList[0];
+        }
+
+        int getName(){
+            return this->name;
+        }
+
+        int getAttribute(){
+            return this->attribute;
+        }
+
+        string getLexeme(){
+            return this->lexeme;
         }
 };
 

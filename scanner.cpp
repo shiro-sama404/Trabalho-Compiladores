@@ -6,16 +6,17 @@ Scanner::Scanner(string inputFileName/*, SymbolTable* table*/)
 {
     this->inputFileName = inputFileName;
     this->input = "";
-    this->pos = 0;
+    this->currentPos = 0;
+    this->currentLine = 1;
 
     ifstream inputFile(inputFileName, ios::in);
-    string currentLine;
+    string currentFileLine;
 
     if (inputFile.is_open())
     {
-        while (getline(inputFile, currentLine))
+        while (getline(inputFile, currentFileLine))
         {
-            this->input.append(currentLine + '\n');
+            this->input.append(currentFileLine + '\n');
         }
         inputFile.close();
     }
@@ -24,8 +25,6 @@ Scanner::Scanner(string inputFileName/*, SymbolTable* table*/)
         cout << "Unable to open file: " << inputFileName << endl;
         exit(EXIT_FAILURE);
     }
-
-    //cout << "input: " << input << endl << "size: " << input.length() << endl;
 
     // Inicializa o mapa de palavras reservadas
     initializeReservedWords();
@@ -55,7 +54,7 @@ void Scanner::initializeReservedWords()
 }
 
 // Métodos auxiliares
-bool Scanner::isEOF()
+bool Scanner::isEOF(int pos)
 {
     return pos >= input.length();
 }
@@ -70,91 +69,90 @@ bool Scanner::isDigit(char c)
     return c >= '0' && c <= '9';
 }
 
-char Scanner::nextChar()
+char Scanner::nextChar(int* pos)
 {
-    return isEOF() ? EOF : input[pos++];
+    return isEOF(*pos) ? EOF : input[(*pos)++];
 }
 
-char Scanner::peekChar()
+char Scanner::peekChar(int pos)
 {
-    return isEOF() ? EOF : input[pos];
+    return isEOF(pos) ? EOF : input[pos];
 }
 
-void Scanner::goBack()
+void Scanner::goBack(int* pos)
 {
-    if (pos > 0)  pos--;
+    if (*pos > 0)  (*pos)--;
 }
 
-void Scanner::skipWhitespace()
+void Scanner::skipWhitespace(int *pos, int* line)
 {
-    char c = peekChar();
-    while (!isEOF() && (c == ' ' || c == '\t' || c == '\n' || c == '\r'))
+    char c = peekChar(*pos);
+    while (!isEOF(*pos) && (c == ' ' || c == '\t' || c == '\n' || c == '\r'))
     {
-        if (peekChar() == '\n')
+        if (peekChar(*pos) == '\n')
         {
-            line++;
+            (*line)++;
         }
-        nextChar();
-        c = peekChar();
+        nextChar(pos);
+        c = peekChar(*pos);
     }
 }
 
-void Scanner::skipComment()
+void Scanner::skipComment(int *pos, int* line)
 {
-    if (peekChar() == '/')
+    if (peekChar(*pos) == '/')
     { // Comentário de linha // ...
-        nextChar(); // Consome o outro '/'
-        while (!isEOF() && peekChar() != '\n')
+        nextChar(pos); // Consome o outro '/'
+        while (!isEOF(*pos) && peekChar(*pos) != '\n')
         {
-            nextChar();
+            nextChar(pos);
         }
     }
-    else if (peekChar() == '*')
+    else if (peekChar(*pos) == '*')
     { // comentário de bloco /* ... */ 
-        nextChar(); // Consome '*'
+        nextChar(pos); // Consome '*'
         bool foundEnd = false;
-        while (!isEOF())
+        while (!isEOF(*pos))
         {
-            if (peekChar() == '*')
+            if (peekChar(*pos) == '*')
             {
-                nextChar();
-                if (peekChar() == '/')
+                nextChar(pos);
+                if (peekChar(*pos) == '/')
                 {
-                    nextChar();
+                    nextChar(pos);
                     foundEnd = true;
                     break;
                 }
             }
             else
             {
-                if (peekChar() == '\n')
+                if (peekChar(*pos) == '\n')
                 {
-                    line++;
+                    (*line)++;
                 }
-                nextChar();
+                nextChar(pos);
             }
         }
         if (!foundEnd)
         {
             error("Unterminated block comment.");
         }
-        cout << "Saiu /" << endl;
     }
     else
     {
         // Provavelmente é um operator.
-        goBack();
+        goBack(pos);
     }
 }
 
 int Scanner::getPos()
 {
-    return pos;
+    return currentPos;
 }
 
 int Scanner::getLine()
 {
-    return line;
+    return currentLine;
 }
 
 string Scanner::getFilename()
@@ -162,33 +160,30 @@ string Scanner::getFilename()
     return inputFileName;
 }
 
-// Método que retorna o próximo token da entrada
-Token* Scanner::nextToken()
-{
+Token* Scanner::getToken(int* pos, int* line){
     string lexeme = "";
     char c;
 
     while (true)
     {
-        skipWhitespace(); // Ignora espaços 
+        skipWhitespace(pos, line); // Ignora espaços 
 
-        if (isEOF())
+        if (isEOF(*pos))
         {
             return new Token(END_OF_FILE, "EOF");
         }
 
-        c = nextChar();
+        c = nextChar(pos);
 
         // Verifica comentários 
         if (c == '/')
         {
-            if (peekChar() == '/' || peekChar() == '*')
+            if (peekChar(*pos) == '/' || peekChar(*pos) == '*')
             {
-                skipComment();
+                skipComment(pos, line);
                 continue; // Itera novamente após ignorar o comentário
             }else{
                 // Se não for um comentário é um operador de divisão.
-                cout << "Entrou no /" << endl;
                 return new Token(OP_DIV, "/");
             }
         }
@@ -197,40 +192,40 @@ Token* Scanner::nextToken()
         if (isLetter(c))
         {
             lexeme += c;
-            while (isLetter(peekChar()) || isDigit(peekChar()) || peekChar() == '_')
+            while (isLetter(peekChar(*pos)) || isDigit(peekChar(*pos)) || peekChar(*pos) == '_')
             {
-                lexeme += nextChar();
+                lexeme += nextChar(pos);
             }
 
             // Tratamento do System.out.println 
             if (lexeme == "System")
             {
-                int current_pos = pos;
+                int current_pos = *pos;
                 string potential_full_lexeme = lexeme;
 
-                if (peekChar() == '.')
+                if (peekChar(*pos) == '.')
                 {
-                    potential_full_lexeme += nextChar(); // Consome '.'
+                    potential_full_lexeme += nextChar(pos); // Consome '.'
                     string out_part = "";
                     // Consome "out"
-                    for (int i = 0; i < 3 && !isEOF(); ++i)
+                    for (int i = 0; i < 3 && !isEOF(*pos); ++i)
                     {
-                        out_part += peekChar();
-                        nextChar();
+                        out_part += peekChar(*pos);
+                        nextChar(pos);
                     }
                     if (out_part == "out")
                     {
                         potential_full_lexeme += out_part;
                         // Consome '.'
-                        if (peekChar() == '.')
+                        if (peekChar(*pos) == '.')
                         {
-                            potential_full_lexeme += nextChar(); // Consome '.'
+                            potential_full_lexeme += nextChar(pos); // Consome '.'
                             string println_part = "";
                             // Consome "println"
-                            for (int i = 0; i < 7 && !isEOF(); ++i)
+                            for (int i = 0; i < 7 && !isEOF(*pos); ++i)
                             {
-                                println_part += peekChar();
-                                nextChar();
+                                println_part += peekChar(*pos);
+                                nextChar(pos);
                             }
                             if (println_part == "println")
                             {
@@ -241,7 +236,7 @@ Token* Scanner::nextToken()
                     }
                 }
                 // Se não for "System.out.println", reverte a posição e trata como ID
-                pos = current_pos;
+                *pos = current_pos;
             }
 
             // Verifica se o lexema é uma palavra reservada
@@ -262,16 +257,16 @@ Token* Scanner::nextToken()
         if (isDigit(c))
         {
             lexeme += c;
-            while (isDigit(peekChar()))
+            while (isDigit(peekChar(*pos)))
             {
-                lexeme += nextChar();
+                lexeme += nextChar(pos);
             }
             return new Token(INTEGER, lexeme);
         }
 
         // Operators 
-        if (c == '&' && peekChar() == '&'){
-            nextChar();
+        if (c == '&' && peekChar(*pos) == '&'){
+            nextChar(pos);
             return new Token(OP_AND, "&&");
         }
         if (c == '<')return new Token(OP_LT, "<");
@@ -281,9 +276,9 @@ Token* Scanner::nextToken()
         if (c == '*') return new Token(OP_MULT, "*");
         if (c == '=')
         {
-            if (peekChar() == '=')
+            if (peekChar(*pos) == '=')
             {
-                nextChar();
+                nextChar(pos);
                 return new Token(OP_EQ, "==");
             }
             else
@@ -293,9 +288,9 @@ Token* Scanner::nextToken()
         }
         if (c == '!')
         {
-            if (peekChar() == '=')
+            if (peekChar(*pos) == '=')
             {
-                nextChar();
+                nextChar(pos);
                 return new Token(OP_NEQ, "!=");
             }
             else
@@ -315,14 +310,54 @@ Token* Scanner::nextToken()
         if (c == '.') return new Token(SEP_DOT, ".");      
         if (c == ',') return new Token(SEP_COMMA, ",");
 
-        // Caracter inválido
-        error("Lexical error: '" + string(1, c) + "'");
-        return nullptr;
+        return new Token(UNDEF, string(1, c));
     }
+}
+
+// Método que retorna o próximo token da entrada
+Token* Scanner::nextToken()
+{
+    Token* token = getToken(&currentPos, &currentLine);
+
+    if(token->getName() == UNDEF){
+        // Token inválido
+        error("Invalid token: '" + token->getLexeme() + "'");
+    }
+    
+    return token;
+}
+
+// Método que retorna o n-ésimo próximo token da entrada
+Token* Scanner::peekNextToken(int n)
+{
+    if (n < 1){ n = 1; }
+
+    int pos = currentPos;
+    int line = currentLine;
+
+    Token* token;
+
+    for(int i = 0; i < n; i++){
+        token = getToken(&pos, &line);
+    }
+    
+    return token;
 }
 
 void Scanner::error(string msg)
 {
-    cout << inputFileName + ":" << line << " lexical error: " << msg << endl;
+    cout << inputFileName + ":" << currentLine << " lexical error: " << msg << endl;
+    
+    Token* token;
+
+    while (!isEOF(currentPos)){
+        token = getToken(&currentPos, &currentLine);
+        
+        if(token->getName() == 0){
+            // Token inválido
+            cout << inputFileName + ":" << currentLine << " lexical error: " << "Invalid token: '" + token->getLexeme() + "'" << endl;
+        }
+    }
+
     exit(EXIT_FAILURE);
 }

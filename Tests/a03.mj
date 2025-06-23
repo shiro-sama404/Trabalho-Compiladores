@@ -2,10 +2,13 @@
 
 class VarTest {
     public static void main (String[] args){
-        int x;
-        boolean y;
         x = 10;
         y = true;
         System.out.println(x);
     }
+}
+
+class aux {
+    int x;
+    boolean y;
 }

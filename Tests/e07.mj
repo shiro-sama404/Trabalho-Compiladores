@@ -1,5 +1,9 @@
 // e07_missing_return.mj
 
+class main {
+    
+}
+
 class ErrorTest {
     public int testMethod(){
         int x;

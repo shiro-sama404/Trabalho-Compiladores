@@ -2,7 +2,11 @@
 
 class ErrorTest {
     public static void main (String[] args){
-        int x;
+        //int x;
         x = 5 # 3; // Erro: '#' não é um operador válido
+        x = 5 @ 3; // Erro: '@' não é um operador válido
+        x = 5 & 3; // Erro: '&' não é um operador válido
+        x = 5 ? 3; // Erro: '?' não é um operador válido
+        x = 5 ¬ 3; // Erro: '¬' não é um operador válido
     }
 }
