@@ -1,6 +1,13 @@
 # Compilador MiniJava Modificado - Análise Léxica, Sintática e Semântica
 
-[cite_start]Este repositório contém a implementação de um compilador para a linguagem MiniJava modificada, desenvolvido como parte da disciplina de Compiladores I (2025/1) da FACOM - Universidade Federal de Mato Grosso do Sul (UFMS).
+Este repositório contém a implementação de um compilador para a linguagem MiniJava modificada, desenvolvido como parte da disciplina de Compiladores I (2025/1) da FACOM - Universidade Federal de Mato Grosso do Sul (UFMS).
+
+## 1. Estudantes
+* Arthur Barbosa de Andrade
+* Lucas Ferreira Barbosa
+
+## 1. Link do Repositório
+* https://github.com/shiro-sama404/Trabalho-Compiladores
 
 ## 1. Descrição do Projeto
 
